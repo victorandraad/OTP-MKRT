@@ -1,169 +1,213 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-900 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h1 class="text-4xl font-bold text-yellow-400 mb-8 text-center">Criar Novo Anúncio</h1>
+    <div class="py-12 bg-main min-h-screen">
+        <div class="container-xl">
+            <h1 class="text-title text-center">Criar Novo Anúncio</h1>
 
-            <div class="bg-gray-800 bg-opacity-50 rounded-xl p-6 backdrop-filter backdrop-blur-lg">
-                <form method="POST" class="space-y-6">
+            <div class="bg-card hover:bg-opacity-70 transition duration-300">
+                <form id="createPostForm" class="space-y-6">
                     @csrf
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-300">Título do Anúncio</label>
-                        <input type="text" name="title" id="title" required minlength="2" maxlength="25" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" id="title" name="title" class="form-input" required>
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-300">Descrição</label>
-                        <textarea name="description" id="description" rows="3" required minlength="2" maxlength="1000" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50"></textarea>
+                        <label for="description" class="form-label">Descrição</label>
+                        <textarea id="description" name="description" rows="4" class="form-input" required></textarea>
                     </div>
 
-                    <div>
-                        <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
-                            Criar Anúncio
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="mt-12 bg-gray-800 bg-opacity-50 rounded-xl p-6 backdrop-filter backdrop-blur-lg">
-                <h2 class="text-2xl font-semibold text-yellow-400 mb-4">Adicionar Item ao Anúncio</h2>
-                <form method="POST" class="space-y-6">
-                    @csrf
-                    <div>
-                        <label for="item_type" class="block text-sm font-medium text-gray-300">Tipo de Item</label>
-                        <select name="item_type" id="item_type" required class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                            <option value="pokemon">Pokémon</option>
-                            <option value="stone">Pedra</option>
-                            <option value="tm">TM</option>
-                            <option value="pokeball">Pokébola</option>
-                            <option value="undefined">Outro</option>
-                        </select>
+                    <div id="itemsContainer" class="space-y-4">
+                        <!-- Items will be added here dynamically -->
                     </div>
 
-                    <div id="pokemon_fields" class="space-y-4 hidden">
-                        <div>
-                            <label for="pokemon_name" class="block text-sm font-medium text-gray-300">Nome do Pokémon</label>
-                            <select name="pokemon_name" id="pokemon_name" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                                @php
-                                    $pokemons = json_decode(file_get_contents(storage_path('app/game_data/pokemons.json')), true)['_default'];
-                                @endphp
-                                @foreach($pokemons as $pokemon)
-                                    <option value="{{ $pokemon['name'] }}">{{ $pokemon['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="pokemon_level" class="block text-sm font-medium text-gray-300">Nível</label>
-                            <input type="number" name="pokemon_level" id="pokemon_level" min="1" max="100" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                        </div>
-                        <div>
-                            <label for="pokemon_nature" class="block text-sm font-medium text-gray-300">Natureza</label>
-                            <input type="text" name="pokemon_nature" id="pokemon_nature" minlength="2" maxlength="20" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                        </div>
-                        <div>
-                            <label for="pokemon_pokeball" class="block text-sm font-medium text-gray-300">Pokébola</label>
-                            <select name="pokemon_pokeball" id="pokemon_pokeball" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                                @php
-                                    $pokeballs = json_decode(file_get_contents(storage_path('app/game_data/pokeballs.json')), true)['_default'];
-                                @endphp
-                                @foreach($pokeballs as $pokeball)
-                                    <option value="{{ $pokeball['name'] }}">{{ $pokeball['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="pokemon_addon" class="block text-sm font-medium text-gray-300">Addon</label>
-                            <input type="text" name="pokemon_addon" id="pokemon_addon" maxlength="100" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                        </div>
-                        <div>
-                            <label for="pokemon_boost" class="block text-sm font-medium text-gray-300">Boost</label>
-                            <input type="number" name="pokemon_boost" id="pokemon_boost" min="0" max="10" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                        </div>
+                    <div class="flex justify-between">
+                        <button type="button" id="addPokemon" class="btn btn-secondary">Adicionar Pokémon</button>
+                        <button type="button" id="addItem" class="btn btn-secondary">Adicionar Item</button>
                     </div>
 
-                    <div id="item_fields" class="space-y-4 hidden">
-                        <div>
-                            <label for="item_name" class="block text-sm font-medium text-gray-300">Nome do Item</label>
-                            <select name="item_name" id="item_name" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                                <!-- Options will be populated dynamically based on item type -->
-                            </select>
-                        </div>
-                        <div>
-                            <label for="item_quantity" class="block text-sm font-medium text-gray-300">Quantidade</label>
-                            <input type="number" name="item_quantity" id="item_quantity" min="1" class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50">
-                        </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Criar Anúncio</button>
                     </div>
 
-                    <div>
-                        <label for="item_price" class="block text-sm font-medium text-gray-300">Preço</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-gray-500 sm:text-sm">$</span>
-                            </div>
-                            <input type="number" name="item_price" id="item_price" min="0" step="0.01" required class="pl-7 block w-full rounded-md bg-gray-700 border-gray-600 text-white focus:border-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-opacity-50" placeholder="0.00">
-                        </div>
-                    </div>
-
-                    <div>
-                        <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
-                            Adicionar Item ao Anúncio
-                        </button>
-                    </div>
+                    <!-- Hidden input for items JSON -->
+                    <input type="hidden" id="itemsJson" name="items" value="">
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        const itemTypeSelect = document.getElementById('item_type');
-        const pokemonFields = document.getElementById('pokemon_fields');
-        const itemFields = document.getElementById('item_fields');
-        const itemNameSelect = document.getElementById('item_name');
+        const pokemons = @json($pokemons);
+        const tms = @json($tms);
+        const stones = @json($stones);
+        const pokeballs = @json($pokeballs);
 
-        const itemData = {
-            stone: @json(json_decode(file_get_contents(storage_path('app/game_data/stones.json')), true)['_default']),
-            tm: @json(json_decode(file_get_contents(storage_path('app/game_data/tms.json')), true)['_default']),
-            pokeball: @json(json_decode(file_get_contents(storage_path('app/game_data/pokeballs.json')), true)['_default'])
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+            let itemCount = 0;
+            const items = [];
 
-        function updateFields() {
-            const selectedType = itemTypeSelect.value;
-            if (selectedType === 'pokemon') {
-                pokemonFields.classList.remove('hidden');
-                itemFields.classList.add('hidden');
-            } else {
-                pokemonFields.classList.add('hidden');
-                itemFields.classList.remove('hidden');
-                
-                // Populate item names based on selected type
-                itemNameSelect.innerHTML = '';
-                if (selectedType in itemData) {
-                    Object.values(itemData[selectedType]).forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.name;
-                        option.textContent = item.name;
-                        itemNameSelect.appendChild(option);
+            function addItemToForm(type) {
+                const itemId = itemCount++;
+                const item = { type, id: itemId };
+                items.push(item);
+
+                const container = document.createElement('div');
+                container.className = 'bg-gray-700 p-4 rounded-lg relative';
+                container.id = `item-${itemId}`;
+                container.innerHTML = `
+                    <button type="button" class="remove-item btn btn-danger absolute top-2 right-2" data-item-id="${itemId}">
+                        Remover
+                    </button>
+                    <h3 class="text-subtitle mb-2">${type === 'pokemon' ? 'Pokémon' : 'Item'}</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">Nome</label>
+                            ${type === 'pokemon' 
+                                ? `<select class="form-select item-input" data-field="name" required>${pokemons.map(p => `<option value="${p}">${p}</option>`).join('')}</select>`
+                                : `
+                                    <select class="form-select item-input" data-field="type" required>
+                                        <option value="">Selecione o tipo de item</option>
+                                        <option value="tm">TM</option>
+                                        <option value="stone">Stone</option>
+                                        <option value="pokeball">Pokeball</option>
+                                        <option value="undefined">Outro</option>
+                                    </select>
+                                    <div id="itemNameContainer${itemId}" class="mt-2"></div>
+                                `
+                            }
+                        </div>
+                        <div>
+                            <label class="form-label">Preço</label>
+                            <input type="number" class="form-input item-input" data-field="price" required>
+                        </div>
+                        ${type === 'pokemon' ? `
+                            <div>
+                                <label class="form-label">Nível</label>
+                                <input type="number" class="form-input item-input" data-field="level" required>
+                            </div>
+                            <div>
+                                <label class="form-label">Natureza</label>
+                                <input type="text" class="form-input item-input" data-field="nature" required>
+                            </div>
+                            <div>
+                                <label class="form-label">Pokébola</label>
+                                <select class="form-select item-input" data-field="pokeball" required>
+                                    ${pokeballs.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Addon</label>
+                                <input type="text" class="form-input item-input" data-field="addon" required>
+                            </div>
+                            <div>
+                                <label class="form-label">Boost</label>
+                                <input type="text" class="form-input item-input" data-field="boost" required>
+                            </div>
+                        ` : `
+                            <div>
+                                <label class="form-label">Quantidade</label>
+                                <input type="number" class="form-input item-input" data-field="quantity" required>
+                            </div>
+                        `}
+                    </div>
+                `;
+                document.getElementById('itemsContainer').appendChild(container);
+
+                // Adiciona o evento de remoção ao botão
+                container.querySelector('.remove-item').addEventListener('click', function() {
+                    removeItem(itemId);
+                });
+
+                // Adiciona eventos para atualizar o item quando os inputs mudam
+                container.querySelectorAll('.item-input').forEach(input => {
+                    input.addEventListener('change', () => updateItem(itemId));
+                });
+
+                if (type !== 'pokemon') {
+                    const itemTypeSelect = container.querySelector(`select[data-field="type"]`);
+                    const itemNameContainer = container.querySelector(`#itemNameContainer${itemId}`);
+
+                    itemTypeSelect.addEventListener('change', function() {
+                        const selectedType = this.value;
+                        let options = [];
+
+                        switch (selectedType) {
+                            case 'tm':
+                                options = tms;
+                                break;
+                            case 'stone':
+                                options = stones;
+                                break;
+                            case 'pokeball':
+                                options = pokeballs;
+                                break;
+                            case 'undefined':
+                                itemNameContainer.innerHTML = `<input type="text" class="form-input item-input" data-field="name" required placeholder="Digite o nome do item">`;
+                                return;
+                            default:
+                                itemNameContainer.innerHTML = '';
+                                return;
+                        }
+
+                        const select = document.createElement('select');
+                        select.className = 'form-select item-input';
+                        select.setAttribute('data-field', 'name');
+                        select.required = true;
+                        select.innerHTML = options.map(o => `<option value="${o}">${o}</option>`).join('');
+                        itemNameContainer.innerHTML = '';
+                        itemNameContainer.appendChild(select);
+
+                        // Adiciona evento para atualizar o item quando o novo select muda
+                        select.addEventListener('change', () => updateItem(itemId));
                     });
-                } else {
-                    // For 'undefined' type, provide a text input instead
-                    const textInput = document.createElement('input');
-                    textInput.type = 'text';
-                    textInput.name = 'item_name';
-                    textInput.id = 'item_name';
-                    textInput.className = itemNameSelect.className;
-                    textInput.required = true;
-                    textInput.minLength = 2;
-                    textInput.maxLength = 50;
-                    itemNameSelect.parentNode.replaceChild(textInput, itemNameSelect);
                 }
+
+                updateItemsJson();
             }
-        }
 
-        // Update fields when the page loads
-        updateFields();
+            function removeItem(itemId) {
+                const itemElement = document.getElementById(`item-${itemId}`);
+                if (itemElement) {
+                    itemElement.remove();
+                }
+                items.splice(items.findIndex(item => item.id === itemId), 1);
+                updateItemsJson();
+            }
 
-        // Update fields when the item type changes
-        itemTypeSelect.addEventListener('change', updateFields);
+            function updateItem(itemId) {
+                const itemElement = document.getElementById(`item-${itemId}`);
+                const item = items.find(item => item.id === itemId);
+                if (item && itemElement) {
+                    itemElement.querySelectorAll('.item-input').forEach(input => {
+                        item[input.getAttribute('data-field')] = input.value;
+                    });
+                }
+                updateItemsJson();
+            }
 
-        gsap.from("form > *", {opacity: 0, y: 20, duration: 0.6, stagger: 0.1, ease: "power3.out"});
+            function updateItemsJson() {
+                document.getElementById('itemsJson').value = JSON.stringify(items);
+            }
+
+            document.getElementById('addPokemon').addEventListener('click', () => addItemToForm('pokemon'));
+            document.getElementById('addItem').addEventListener('click', () => addItemToForm('item'));
+
+            // Usar o handleFormSubmit do helpers.js
+            handleFormSubmit('createPostForm', '{{ route("posts.store") }}', {
+                title: { required: true, minLength: 2, maxLength: 25 },
+                description: { required: true, minLength: 2, maxLength: 1000 },
+                items: { required: true }
+            }, 
+            (data) => {
+                // On success
+                window.location.href = data.redirect;
+            },
+            (error) => {
+                // On error
+                alert(error);
+            });
+
+            animateElements('.bg-card', { y: 50, duration: 0.8 });
+        });
     </script>
 </x-app-layout>

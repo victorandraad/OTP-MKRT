@@ -5,7 +5,7 @@
 
             @auth
                 <div class="mb-8 text-center">
-                    <a href="{{ route('create_post') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
+                    <a href="{{ route('posts.create') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
                         Criar Novo Anúncio
                     </a>
                 </div>
@@ -59,18 +59,20 @@
             <div class="mt-12 bg-gray-800 bg-opacity-50 rounded-xl p-6 backdrop-filter backdrop-blur-lg">
                 <h2 class="text-2xl font-semibold text-yellow-400 mb-4">Anúncios Recentes</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @for ($i = 1; $i <= 6; $i++)
+                    @forelse ($recentPosts as $post)
                         <div class="bg-gray-700 bg-opacity-50 rounded-lg p-4 hover:bg-opacity-70 transition duration-300">
-                            <h3 class="text-xl font-semibold text-white mb-2">Anúncio de Exemplo {{ $i }}</h3>
-                            <p class="text-gray-300 mb-4">Este é um anúncio de exemplo para demonstrar o layout do marketplace.</p>
+                            <h3 class="text-xl font-semibold text-white mb-2">{{ $post->title }}</h3>
+                            <p class="text-gray-300 mb-4">{{ Str::limit($post->description, 100) }}</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-400 text-sm">Usuário {{ $i }}</span>
-                                <a href="{{ route('post') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
+                                <span class="text-gray-400 text-sm">{{ $post->user->name }}</span>
+                                <a href="{{ route('posts.show', $post->id) }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
                                     Ver Detalhes
                                 </a>
                             </div>
                         </div>
-                    @endfor
+                    @empty
+                        <p class="text-gray-300 col-span-3">Nenhum anúncio disponível no momento.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
