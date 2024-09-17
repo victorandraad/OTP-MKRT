@@ -5,7 +5,7 @@
 
             @auth
                 <div class="mb-8 text-center">
-                    <a href="#" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
+                    <a href="{{ route('create_post') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
                         Criar Novo Anúncio
                     </a>
                 </div>
@@ -21,16 +21,18 @@
                 </div>
             @endauth
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @php
-                    $categories = [
-                        'Pokémons' => 'pokemons.json',
-                        'Pokébolas' => 'pokeballs.json',
-                        'TMs' => 'tms.json',
-                        'Pedras' => 'stones.json'
-                    ];
-                @endphp
+            @php
+                $jsonPath = storage_path('app/game_data/*.json');
+                $jsonFiles = glob($jsonPath);
+                $categories = [];
+                foreach ($jsonFiles as $file) {
+                    $fileName = basename($file);
+                    $categoryName = ucfirst(str_replace('.json', '', $fileName));
+                    $categories[$categoryName] = $fileName;
+                }
+            @endphp
 
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($categories as $categoryName => $fileName)
                     <div class="bg-gray-800 bg-opacity-50 rounded-xl p-6 backdrop-filter backdrop-blur-lg hover:bg-opacity-70 transition duration-300">
                         <h2 class="text-2xl font-semibold text-yellow-400 mb-4">{{ $categoryName }}</h2>
@@ -63,7 +65,7 @@
                             <p class="text-gray-300 mb-4">Este é um anúncio de exemplo para demonstrar o layout do marketplace.</p>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 text-sm">Usuário {{ $i }}</span>
-                                <a href="#" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
+                                <a href="{{ route('post') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition duration-300">
                                     Ver Detalhes
                                 </a>
                             </div>
